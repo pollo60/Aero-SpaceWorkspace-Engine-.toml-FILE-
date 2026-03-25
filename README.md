@@ -81,7 +81,7 @@ Pull this architectural blueprint to your local machine:
 git clone \[https://github.com/pollo60/Aero-SpaceWorkspace-Engine.git\](https://github.com/pollo60/Aero-SpaceWorkspace-Engine.git)  
 cd Aero-SpaceWorkspace-Engine
 
-If your working copy is already at `/Users/altayhennig/Desktop/seasn-aerospace-workspace`, continue from there.
+If your working copy is already at `/Users/UserName/Desktop/seasn-aerospace-workspace`, continue from there.
 
 ### **3\. Deploy Engine Configuration**
 
@@ -139,4 +139,4 @@ alt-s \= 'move-node-to-monitor \--wrap-around next'
 
 To complete this high-performance ecosystem, I strongly recommend replacing macOS Spotlight with [Raycast](https://www.raycast.com/). I utilize Raycast as my primary, zero-latency command center to instantly launch applications, manage my clipboard history, and execute system commands without ever breaking keyboard focus.
 
-*Maintained by Altay Hennig | Strategic Architect*
+*Maintained by pollo60 | Strategic Architect*
