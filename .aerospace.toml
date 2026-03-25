@@ -1,0 +1,118 @@
+config-version = 2
+start-at-login = true
+
+# Keep tiling in sync when Dock autohide state changes.
+after-startup-command = ['exec-and-forget /bin/zsh ~/.config/aerospace/dock-layout-sync.sh']
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 0
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'horizontal'
+
+# Keep a stable set of workspaces so switching spaces feels predictable.
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+[gaps]
+inner.horizontal = 0
+inner.vertical = 0
+outer.left = 0
+outer.bottom = 0
+outer.top = 0
+outer.right = 0
+
+
+# ============================================
+# Workspace routing (1=AI, 2=IDE, 3=Terminal)
+# ============================================
+
+# Default: keep newly detected windows floating so manual resize persists.
+[[on-window-detected]]
+if.app-name-regex-substring = '.*'
+run = 'layout floating'
+check-further-callbacks = true
+
+# 1. Gemini / Testflight (Chrome PWA) -> Workspace 1
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude)'
+run = ['move-node-to-workspace 1', 'layout floating']
+
+# 2. Visual Studio Code -> Workspace 2
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = ['move-node-to-workspace 2', 'layout tiling']
+
+# 3. iTerm2 -> Workspace 3 (Tiling!)
+[[on-window-detected]]
+if.app-id = 'com.googlecode.iterm2'
+run = ['move-node-to-workspace 3', 'layout tiling']
+
+# System dialogs -> Floating
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+# Note: Keep this ruleset minimal to avoid accidental global overrides.
+
+[mode.main.binding]
+# ====================
+# Multi-monitor routing
+# ====================
+# Move the current workspace to the next monitor (wrap-around).
+alt-shift-m = 'move-workspace-to-monitor --wrap-around next'
+
+# Focus the next monitor (wrap-around).
+alt-m = 'focus-monitor --wrap-around next'
+
+# Move only the focused window to the next monitor (wrap-around).
+alt-shift-n = 'move-node-to-monitor --wrap-around next'
+
+# Requested minimal controls
+alt-up = ['layout floating', 'resize height -80']
+alt-down = ['layout floating', 'resize height +80']
+alt-right = ['layout floating', 'resize width +80']
+alt-left = ['layout floating', 'resize width -80']
+
+# Focus navigation kept on ctrl+opt+arrow
+alt-ctrl-up = 'focus up'
+alt-ctrl-down = 'focus down'
+alt-ctrl-right = 'focus right'
+alt-ctrl-left = 'focus left'
+
+# Optional: move windows with opt+shift+arrow
+alt-shift-up = 'move up'
+alt-shift-down = 'move down'
+alt-shift-right = 'move right'
+alt-shift-left = 'move left'
+
+# Toggle for "full" tiled look <-> floating window (works in dedicated workspaces too)
+alt-f = 'layout floating tiling'
+
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
+
+# Quick repair if a window was accidentally tiled.
+alt-ctrl-r = 'layout floating'
+
+# Manual fallback to recompute tiling geometry
+alt-ctrl-d = ['flatten-workspace-tree', 'balance-sizes']
+
+alt-shift-r = 'reload-config'
