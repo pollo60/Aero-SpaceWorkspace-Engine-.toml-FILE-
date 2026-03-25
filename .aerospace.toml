@@ -23,20 +23,20 @@ outer.top = 0
 outer.right = 0
 
 
-# ============================================
-# Workspace routing (1=AI, 2=IDE, 3=Terminal)
-# ============================================
+# ==========================================================
+# WORKSPACE ROUTING (Architect's Model: 1=AI, 2=IDE, 3=CLI)
+# ==========================================================
 
-# Default: keep newly detected windows floating so manual resize persists.
+# Default: keep newly detected windows tiled so new windows auto-snap and share space.
 [[on-window-detected]]
 if.app-name-regex-substring = '.*'
-run = 'layout floating'
+run = 'layout tiling'
 check-further-callbacks = true
 
 # 1. Gemini / Testflight (Chrome PWA) -> Workspace 1
 [[on-window-detected]]
 if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude)'
-run = ['move-node-to-workspace 1', 'layout floating']
+run = ['move-node-to-workspace 1', 'layout tiling']
 
 # 2. Visual Studio Code -> Workspace 2
 [[on-window-detected]]
@@ -48,31 +48,32 @@ run = ['move-node-to-workspace 2', 'layout tiling']
 if.app-id = 'com.googlecode.iterm2'
 run = ['move-node-to-workspace 3', 'layout tiling']
 
-# System dialogs -> Floating
+# System-Dialoge -> Floating
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
 run = 'layout floating'
 
-# Note: Keep this ruleset minimal to avoid accidental global overrides.
+# KRITISCH: Entferne alle anderen [[on-window-detected]] Blöcke, 
+# die 'layout floating' für alle Fenster erzwingen!
 
 [mode.main.binding]
-# ====================
-# Multi-monitor routing
-# ====================
-# Move the current workspace to the next monitor (wrap-around).
+# ==========================================================
+# MULTI-MONITOR ROUTING (Architect's Extension)
+# ==========================================================
+# Verschiebt den kompletten aktuellen Workspace (z.B. Space 3) auf den anderen Monitor
 alt-shift-m = 'move-workspace-to-monitor --wrap-around next'
 
-# Focus the next monitor (wrap-around).
+# Fokussiert den anderen Monitor (Fokus/Maus springt rüber)
 alt-m = 'focus-monitor --wrap-around next'
 
-# Move only the focused window to the next monitor (wrap-around).
+# Verschiebt nur das aktuell aktive Fenster auf den anderen Monitor
 alt-shift-n = 'move-node-to-monitor --wrap-around next'
 
 # Requested minimal controls
-alt-up = ['layout floating', 'resize height -80']
-alt-down = ['layout floating', 'resize height +80']
-alt-right = ['layout floating', 'resize width +80']
-alt-left = ['layout floating', 'resize width -80']
+alt-up = 'resize height -80'
+alt-down = 'resize height +80'
+alt-right = 'resize width +80'
+alt-left = 'resize width -80'
 
 # Focus navigation kept on ctrl+opt+arrow
 alt-ctrl-up = 'focus up'
@@ -109,8 +110,8 @@ alt-shift-7 = 'move-node-to-workspace 7'
 alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 
-# Quick repair if a window was accidentally tiled.
-alt-ctrl-r = 'layout floating'
+# Quick repair if a window was accidentally floating.
+alt-ctrl-r = 'layout tiling'
 
 # Manual fallback to recompute tiling geometry
 alt-ctrl-d = ['flatten-workspace-tree', 'balance-sizes']
