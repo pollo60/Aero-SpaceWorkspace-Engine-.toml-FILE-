@@ -108,6 +108,79 @@ To achieve zero-friction UI control, map this shortcut to your mouse:
 
 **☕ Architect's Call to Action:** *Mac Mouse Fix is an incredible piece of independent engineering. If you find the "Buy a Coffee" button within their app, use it. Great tools build great software.*
 
+## **📁 Config Profiles**
+
+The `profiles/` directory ships two ready-to-use config variants. Use `scripts/switch_profile.sh` to activate one instantly.
+
+| Profile file | Use case |
+| :---- | :---- |
+| `profiles/macgod.toml` | **MacGOD Ghost Mode** — `default-root-container-layout = 'float'`, yabai + Phoenix own all chrome and tiling. |
+| `profiles/laptop.toml` | **Single-display laptop** — accordion tiling, 7 workspaces, compact defaults for a built-in MacBook panel. |
+
+### Activating a Profile
+
+```bash
+# Interactive menu
+./scripts/switch_profile.sh
+
+# Direct activation by name
+./scripts/switch_profile.sh macgod
+./scripts/switch_profile.sh laptop
+
+# Or point to any custom TOML
+./scripts/switch_profile.sh ~/my-custom.toml
+```
+
+The script automatically **backs up** your current `~/.aerospace.toml` to `~/.aerospace_profiles_backup/` before overwriting it, and calls `aerospace reload-config` if the CLI is in your PATH.
+
+---
+
+## **🔭 MacGOD Ghost Mode — Full Config Files**
+
+The `configs/` directory contains the companion files required to run full MacGOD mode:
+
+| File | Purpose |
+| :---- | :---- |
+| `configs/yabairc` | Minimal yabai config — removes title bars and shadows, keeps layout floating so AeroSpace/Phoenix own positioning. |
+| `configs/phoenixrc.js` | Starter Phoenix JavaScript config — grid-snap keybindings, a centre-window shortcut, and a VS Code auto-maximise hook. |
+
+### Deploy MacGOD dependencies
+
+```bash
+# 1. Copy yabai config
+cp configs/yabairc ~/.yabairc
+
+# 2. Copy Phoenix config
+cp configs/phoenixrc.js ~/.phoenix.js
+
+# 3. Install tools (if not already installed)
+brew install koekeishiya/formulae/yabai
+brew install --cask phoenix
+
+# 4. Start services
+brew services start yabai
+
+# 5. Activate the MacGOD AeroSpace profile
+./scripts/switch_profile.sh macgod
+```
+
+> **⚠️ Note:** yabai title-bar removal requires SIP to be disabled and `sudo yabai --install-sa` to be run after every macOS update.
+
+### Phoenix Grid-Snap Keybindings
+
+| Shortcut | Action |
+| :---- | :---- |
+| Opt + Ctrl + M | Maximise focused window |
+| Opt + Ctrl + [ | Snap to left half |
+| Opt + Ctrl + ] | Snap to right half |
+| Opt + Ctrl + C | Centre window (60 % × 80 %) |
+| Opt + Ctrl + , | Top-left quadrant |
+| Opt + Ctrl + . | Top-right quadrant |
+| Opt + Ctrl + / | Bottom-left quadrant |
+| Opt + Ctrl + ; | Bottom-right quadrant |
+
+---
+
 ## **🛠 Setup & Installation**
 
 ### **1\. Prerequisites**
@@ -162,6 +235,30 @@ If you need to adapt the App-to-Workspace routing for your own tech stack, follo
 ./scripts/get\_appid.sh
 
 Click the target window, and the script will output the exact ID to paste into your config.
+
+### **DX Toolkit Reference**
+
+| Script | Purpose |
+| :---- | :---- |
+| `scripts/get_appid.sh` | Print the Bundle ID of the currently focused app window. |
+| `scripts/switch_profile.sh` | Activate a config profile from `profiles/` with automatic backup and reload. |
+| `scripts/workspace_status.sh` | Display a formatted snapshot of all workspaces and their windows. |
+
+**`workspace_status.sh` usage examples:**
+
+```bash
+# Full workspace snapshot (all spaces)
+./scripts/workspace_status.sh
+
+# Show only the Code workspace
+./scripts/workspace_status.sh --workspace Code
+
+# Compact one-liner-per-workspace summary
+./scripts/workspace_status.sh --short
+
+# Raw JSON (for scripting)
+./scripts/workspace_status.sh --json
+```
 
 **Example: Swapping VS Code for JetBrains IntelliJ**
 
