@@ -53,12 +53,28 @@ check-further-callbacks = true
 if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude|copilot)'
 run = ['move-node-to-workspace AI', 'layout tiling']
 
-# ── Code workspace ── Visual Studio Code
+# ── Code workspace ── Visual Studio Code, Cursor, Xcode, JetBrains IDEs, Zed
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
 run = ['move-node-to-workspace Code', 'layout tiling']
 
-# ── CLI workspace ── iTerm2 and built-in Terminal
+[[on-window-detected]]
+if.app-id = 'com.todesktop.230313mzl4w4u92'   # Cursor
+run = ['move-node-to-workspace Code', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.dt.Xcode'
+run = ['move-node-to-workspace Code', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'dev.zed.Zed'
+run = ['move-node-to-workspace Code', 'layout tiling']
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)(intellij|webstorm|pycharm|goland|clion|datagrip|rubymine|rider)'
+run = ['move-node-to-workspace Code', 'layout tiling']
+
+# ── CLI workspace ── iTerm2, Terminal, Warp, Ghostty, Kitty, Hyper
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
 run = ['move-node-to-workspace CLI', 'layout tiling']
@@ -67,7 +83,23 @@ run = ['move-node-to-workspace CLI', 'layout tiling']
 if.app-id = 'com.apple.Terminal'
 run = ['move-node-to-workspace CLI', 'layout tiling']
 
-# ── Browser workspace ── Safari, Chrome, Firefox, Arc
+[[on-window-detected]]
+if.app-id = 'dev.warp.Warp'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'co.zeit.hyper'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+# ── Browser workspace ── Safari, Chrome, Firefox, Arc, Brave, Edge, Vivaldi
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = ['move-node-to-workspace Browser', 'layout tiling']
@@ -81,10 +113,22 @@ if.app-id = 'org.mozilla.firefox'
 run = ['move-node-to-workspace Browser', 'layout tiling']
 
 [[on-window-detected]]
-if.app-id = 'company.thebrowser.Browser'
+if.app-id = 'company.thebrowser.Browser'   # Arc
 run = ['move-node-to-workspace Browser', 'layout tiling']
 
-# ── Media workspace ── Spotify, Apple Music
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.edgemac'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.vivaldi.Vivaldi'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+# ── Media workspace ── Spotify, Apple Music, Plex, VLC, IINA
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = ['move-node-to-workspace Media', 'layout tiling']
@@ -93,7 +137,19 @@ run = ['move-node-to-workspace Media', 'layout tiling']
 if.app-id = 'com.apple.Music'
 run = ['move-node-to-workspace Media', 'layout tiling']
 
-# ── Social workspace ── Slack, Apple Mail, Messages, Discord
+[[on-window-detected]]
+if.app-id = 'com.plexapp.plex'
+run = ['move-node-to-workspace Media', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'org.videolan.vlc'
+run = ['move-node-to-workspace Media', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.colliderli.iina'
+run = ['move-node-to-workspace Media', 'layout tiling']
+
+# ── Social workspace ── Slack, Mail, Messages, Discord, Teams, Zoom, Telegram, WhatsApp, Linear
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = ['move-node-to-workspace Social', 'layout tiling']
@@ -110,9 +166,46 @@ run = ['move-node-to-workspace Social', 'layout tiling']
 if.app-id = 'com.hnc.Discord'
 run = ['move-node-to-workspace Social', 'layout tiling']
 
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.linear'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+# ── Scratch workspace 7 ── Notion, Obsidian, Figma, Design tools
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = ['move-node-to-workspace 7', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = ['move-node-to-workspace 7', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.figma.Desktop'
+run = ['move-node-to-workspace 7', 'layout tiling']
+
 # ── System dialogs → floating (prevents off-screen drift to last pixel)
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
 run = 'layout floating'
 
 [mode.main.binding]

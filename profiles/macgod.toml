@@ -1,0 +1,161 @@
+config-version = 2
+start-at-login = true
+
+# Keep tiling in sync when Dock autohide state changes.
+after-startup-command = ['exec-and-forget /bin/zsh ~/.config/aerospace/dock-layout-sync.sh']
+
+# ==========================================================
+# MacGOD GHOST MODE — yabai + Phoenix own layout & chrome
+# ==========================================================
+# Title bars removed via yabai.  Phoenix handles per-window
+# positioning and naming.  AeroSpace is in floating mode so
+# it does NOT re-tile windows; it still handles workspace
+# routing and keybindings.
+# ==========================================================
+
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = false
+
+accordion-padding = 0
+default-root-container-layout = 'float'   # yabai + Phoenix own the layout
+default-root-container-orientation = 'horizontal'
+
+# Named, persistent workspaces — all semantic identities.
+# Scratch / Misc / Temp are intentionally unrouted free spaces.
+persistent-workspaces = ['AI', 'Code', 'CLI', 'Browser', 'Media', 'Social', 'Scratch', 'Misc', 'Temp']
+
+[gaps]
+inner.horizontal = 0
+inner.vertical   = 0
+outer.left   = 0
+outer.bottom = 0
+outer.top    = 0
+outer.right  = 0
+
+
+# ==========================================================
+# WORKSPACE ROUTING
+# AI | Code | CLI | Browser | Media | Social | 7 | 8 | 9
+# ==========================================================
+
+# Default: float every new window — yabai owns the layout.
+[[on-window-detected]]
+if.app-name-regex-substring = '.*'
+run = 'layout floating'
+check-further-callbacks = true
+
+# ── AI workspace ── Gemini, ChatGPT, Claude, Copilot (PWAs or native)
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude|copilot)'
+run = 'move-node-to-workspace AI'
+
+# ── Code workspace ── Visual Studio Code
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = 'move-node-to-workspace Code'
+
+# ── CLI workspace ── iTerm2 and built-in Terminal
+[[on-window-detected]]
+if.app-id = 'com.googlecode.iterm2'
+run = 'move-node-to-workspace CLI'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = 'move-node-to-workspace CLI'
+
+# ── Browser workspace ── Safari, Chrome, Firefox, Arc
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'org.mozilla.firefox'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'company.thebrowser.Browser'
+run = 'move-node-to-workspace Browser'
+
+# ── Media workspace ── Spotify, Apple Music
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace Media'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = 'move-node-to-workspace Media'
+
+# ── Social workspace ── Slack, Apple Mail, Messages, Discord
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace Social'
+
+[mode.main.binding]
+# ==========================================================
+# MULTI-MONITOR ROUTING
+# ==========================================================
+alt-shift-m = 'move-workspace-to-monitor --wrap-around next'
+alt-m = 'focus-monitor --wrap-around next'
+alt-shift-n = 'move-node-to-monitor --wrap-around next'
+
+# ── Resize (opt+arrow) ─────────────────────────────────────────────────────
+alt-up    = 'resize height -80'
+alt-down  = 'resize height +80'
+alt-right = 'resize width +80'
+alt-left  = 'resize width -80'
+
+# ── Focus (ctrl+opt+arrow) ────────────────────────────────────────────────
+alt-ctrl-up    = 'focus up'
+alt-ctrl-down  = 'focus down'
+alt-ctrl-right = 'focus right'
+alt-ctrl-left  = 'focus left'
+
+# ── Move window in tiling grid (opt+shift+arrow) ──────────────────────────
+alt-shift-up    = 'move up'
+alt-shift-down  = 'move down'
+alt-shift-right = 'move right'
+alt-shift-left  = 'move left'
+
+# Toggle tiling ↔ floating
+alt-f = 'layout floating tiling'
+
+# ── Workspace Navigation ──────────────────────────────────────────────────
+alt-1 = 'workspace AI'
+alt-2 = 'workspace Code'
+alt-3 = 'workspace CLI'
+alt-4 = 'workspace Browser'
+alt-5 = 'workspace Media'
+alt-6 = 'workspace Social'
+alt-7 = 'workspace Scratch'
+alt-8 = 'workspace Misc'
+alt-9 = 'workspace Temp'
+
+alt-shift-1 = ['move-node-to-workspace AI',      'workspace AI']
+alt-shift-2 = ['move-node-to-workspace Code',    'workspace Code']
+alt-shift-3 = ['move-node-to-workspace CLI',     'workspace CLI']
+alt-shift-4 = ['move-node-to-workspace Browser', 'workspace Browser']
+alt-shift-5 = ['move-node-to-workspace Media',   'workspace Media']
+alt-shift-6 = ['move-node-to-workspace Social',  'workspace Social']
+alt-shift-7 = ['move-node-to-workspace Scratch', 'workspace Scratch']
+alt-shift-8 = ['move-node-to-workspace Misc',    'workspace Misc']
+alt-shift-9 = ['move-node-to-workspace Temp',    'workspace Temp']
+
+alt-ctrl-r = 'layout tiling'
+alt-ctrl-d = ['flatten-workspace-tree', 'balance-sizes']
+alt-shift-r = 'reload-config'
