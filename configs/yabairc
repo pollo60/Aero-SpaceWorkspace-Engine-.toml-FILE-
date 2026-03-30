@@ -1,0 +1,90 @@
+#!/usr/bin/env sh
+# =============================================================================
+# ~/.yabairc — MacGOD Ghost Mode (yabai layer)
+# =============================================================================
+# This is the yabai configuration for MacGOD Ghost Mode.
+# AeroSpace handles workspace routing and key bindings.
+# yabai handles visual chrome: title bars, shadows, and border decorations.
+#
+# Prerequisites
+# ─────────────
+#   1. System Integrity Protection (SIP) must be disabled (or partially disabled)
+#      for the scripting addition that removes title bars.
+#      In macOS Recovery: csrutil enable --without debug --without fs
+#
+#   2. Install yabai:
+#        brew install koekeishiya/formulae/yabai
+#        brew services start yabai
+#
+#   3. Install the scripting addition (after every macOS update):
+#        sudo yabai --install-sa
+#
+#   4. Activate MacGOD mode in ~/.aerospace.toml:
+#        Run ./scripts/toggle_macgod.sh --on   (or edit the TOML manually)
+# =============================================================================
+
+# ── Scripting Addition ────────────────────────────────────────────────────────
+# Loads the scripting addition that gives yabai access to private SkyLight APIs.
+# This is required for title bar removal and window border control.
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+yabai -m signal --add event=yabai_daemon_message action="sudo yabai --load-sa"
+
+# ── Global Settings ───────────────────────────────────────────────────────────
+# AeroSpace owns the layout engine. Set yabai to 'float' so it does not fight
+# AeroSpace for tiling control.
+yabai -m config layout float
+
+# ── Visual Chrome Removal ─────────────────────────────────────────────────────
+# Remove title bars from all windows — the primary reason to run yabai.
+yabai -m config window_titlebar off
+
+# Disable shadows (they cause visual artefacts on borderless windows).
+yabai -m config window_shadow off
+
+# ── Window Borders (optional — uncomment to enable) ──────────────────────────
+# A 2px border helps track which window has focus with no title bar.
+# yabai -m config window_border on
+# yabai -m config window_border_width 2
+# yabai -m config active_window_border_color   0xff00ffff   # cyan  = focused
+# yabai -m config normal_window_border_color   0xff444444   # grey  = unfocused
+# yabai -m config insert_feedback_color        0xffd75f5f   # red   = insert marker
+
+# ── Mouse Follows Focus ───────────────────────────────────────────────────────
+# Warp the mouse cursor to the centre of the newly focused window.
+# Improves feel when switching workspaces with AeroSpace key bindings.
+yabai -m config mouse_follows_focus on
+yabai -m config focus_follows_mouse off   # disable reverse (mouse → focus)
+
+# ── Mouse Modifiers ───────────────────────────────────────────────────────────
+# Since AeroSpace owns tiling, set mouse actions to move/resize floating windows.
+yabai -m config mouse_modifier ctrl
+yabai -m config mouse_action1 move
+yabai -m config mouse_action2 resize
+
+# ── Window Opacity ────────────────────────────────────────────────────────────
+# Dim unfocused windows for instant visual context awareness.
+# Values: 0.0 (invisible) → 1.0 (opaque). Unfocused at ~85% keeps text legible.
+yabai -m config window_opacity on
+yabai -m config window_opacity_duration 0.1
+yabai -m config active_window_opacity   1.0
+yabai -m config normal_window_opacity   0.85
+
+# ── App-Specific Rules ────────────────────────────────────────────────────────
+# Keep certain system windows floating and un-managed by yabai.
+yabai -m rule --add app="^System Preferences$"  manage=off
+yabai -m rule --add app="^System Settings$"     manage=off
+yabai -m rule --add app="^Activity Monitor$"    manage=off
+yabai -m rule --add app="^Archive Utility$"     manage=off
+yabai -m rule --add app="^Calculator$"          manage=off
+yabai -m rule --add app="^Dictionary$"          manage=off
+yabai -m rule --add app="^Finder$"              manage=off
+yabai -m rule --add app="^Keychain Access$"     manage=off
+yabai -m rule --add app="^Simulator$"           manage=off
+
+# Prevent yabai managing dialogs / sheets.
+yabai -m rule --add type=dialog  manage=off
+yabai -m rule --add type=sheet   manage=off
+yabai -m rule --add type=utility manage=off
+
+echo "yabai (MacGOD Ghost Mode) configuration loaded."
