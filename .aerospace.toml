@@ -4,6 +4,19 @@ start-at-login = true
 # Keep tiling in sync when Dock autohide state changes.
 after-startup-command = ['exec-and-forget /bin/zsh ~/.config/aerospace/dock-layout-sync.sh']
 
+# ==========================================================
+# MacGOD DEPLOYMENT TOGGLE
+# ==========================================================
+# This config ships ready for MacGOD (yabai + Phoenix layer).
+# When MacGOD is active, swap the section below to:
+#
+#   enable-normalization-flatten-containers = false
+#   enable-normalization-opposite-orientation-for-nested-containers = false
+#   default-root-container-layout = 'float'   # yabai + Phoenix own the layout
+#
+# Without MacGOD, leave these at their current (tiling) values.
+# ==========================================================
+
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
@@ -11,104 +24,155 @@ accordion-padding = 0
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'horizontal'
 
-# Keep a stable set of workspaces so switching spaces feels predictable.
-persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+# Named, persistent workspaces — semantic identity over raw numbers.
+# Mnemonic: alt+1=AI  alt+2=Code  alt+3=CLI  alt+4=Browser  alt+5=Media  alt+6=Social
+persistent-workspaces = ['AI', 'Code', 'CLI', 'Browser', 'Media', 'Social', '7', '8', '9']
 
 [gaps]
 inner.horizontal = 0
-inner.vertical = 0
-outer.left = 0
+inner.vertical   = 0
+outer.left   = 0
 outer.bottom = 0
-outer.top = 0
-outer.right = 0
+outer.top    = 0
+outer.right  = 0
 
 
 # ==========================================================
-# WORKSPACE ROUTING (Architect's Model: 1=AI, 2=IDE, 3=CLI)
+# WORKSPACE ROUTING
+# AI | Code | CLI | Browser | Media | Social | 7 | 8 | 9
 # ==========================================================
 
-# Default: keep newly detected windows tiled so new windows auto-snap and share space.
+# Default: tile every new window so it auto-snaps into the active workspace.
 [[on-window-detected]]
 if.app-name-regex-substring = '.*'
 run = 'layout tiling'
 check-further-callbacks = true
 
-# 1. Gemini / Testflight (Chrome PWA) -> Workspace 1
+# ── AI workspace ── Gemini, ChatGPT, Claude, Copilot (PWAs or native)
 [[on-window-detected]]
-if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude)'
-run = ['move-node-to-workspace 1', 'layout tiling']
+if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude|copilot)'
+run = ['move-node-to-workspace AI', 'layout tiling']
 
-# 2. Visual Studio Code -> Workspace 2
+# ── Code workspace ── Visual Studio Code
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
-run = ['move-node-to-workspace 2', 'layout tiling']
+run = ['move-node-to-workspace Code', 'layout tiling']
 
-# 3. iTerm2 -> Workspace 3 (Tiling!)
+# ── CLI workspace ── iTerm2 and built-in Terminal
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
-run = ['move-node-to-workspace 3', 'layout tiling']
+run = ['move-node-to-workspace CLI', 'layout tiling']
 
-# System-Dialoge -> Floating
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+# ── Browser workspace ── Safari, Chrome, Firefox, Arc
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'org.mozilla.firefox'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'company.thebrowser.Browser'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+# ── Media workspace ── Spotify, Apple Music
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = ['move-node-to-workspace Media', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = ['move-node-to-workspace Media', 'layout tiling']
+
+# ── Social workspace ── Slack, Apple Mail, Messages, Discord
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = ['move-node-to-workspace Social', 'layout tiling']
+
+# ── System dialogs → floating (prevents off-screen drift to last pixel)
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
 run = 'layout floating'
 
-# KRITISCH: Entferne alle anderen [[on-window-detected]] Blöcke, 
-# die 'layout floating' für alle Fenster erzwingen!
-
 [mode.main.binding]
 # ==========================================================
-# MULTI-MONITOR ROUTING (Architect's Extension)
+# MULTI-MONITOR ROUTING
 # ==========================================================
-# Verschiebt den kompletten aktuellen Workspace (z.B. Space 3) auf den anderen Monitor
+# Move the entire current workspace to the next monitor
 alt-shift-m = 'move-workspace-to-monitor --wrap-around next'
 
-# Fokussiert den anderen Monitor (Fokus/Maus springt rüber)
+# Focus the next monitor
 alt-m = 'focus-monitor --wrap-around next'
 
-# Verschiebt nur das aktuell aktive Fenster auf den anderen Monitor
+# Move only the focused window to the next monitor
 alt-shift-n = 'move-node-to-monitor --wrap-around next'
 
-# Requested minimal controls
-alt-up = 'resize height -80'
-alt-down = 'resize height +80'
+# ── Resize (opt+arrow) ─────────────────────────────────────────────────────
+alt-up    = 'resize height -80'
+alt-down  = 'resize height +80'
 alt-right = 'resize width +80'
-alt-left = 'resize width -80'
+alt-left  = 'resize width -80'
 
-# Focus navigation kept on ctrl+opt+arrow
-alt-ctrl-up = 'focus up'
-alt-ctrl-down = 'focus down'
+# ── Focus (ctrl+opt+arrow) ────────────────────────────────────────────────
+alt-ctrl-up    = 'focus up'
+alt-ctrl-down  = 'focus down'
 alt-ctrl-right = 'focus right'
-alt-ctrl-left = 'focus left'
+alt-ctrl-left  = 'focus left'
 
-# Optional: move windows with opt+shift+arrow
-alt-shift-up = 'move up'
-alt-shift-down = 'move down'
+# ── Move window in tiling grid (opt+shift+arrow) ──────────────────────────
+alt-shift-up    = 'move up'
+alt-shift-down  = 'move down'
 alt-shift-right = 'move right'
-alt-shift-left = 'move left'
+alt-shift-left  = 'move left'
 
-# Toggle for "full" tiled look <-> floating window (works in dedicated workspaces too)
+# Toggle tiling ↔ floating
 alt-f = 'layout floating tiling'
 
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
+# ── Workspace Navigation ──────────────────────────────────────────────────
+# opt+number  →  switch to named workspace
+alt-1 = 'workspace AI'
+alt-2 = 'workspace Code'
+alt-3 = 'workspace CLI'
+alt-4 = 'workspace Browser'
+alt-5 = 'workspace Media'
+alt-6 = 'workspace Social'
 alt-7 = 'workspace 7'
 alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
+# opt+shift+number  →  move focused window AND follow it to the named workspace
+# (you use shift+opt+number a lot — this makes the window travel with you)
+# NOTE: workspace name appears twice per line — keep both sides in sync if you rename a workspace.
+alt-shift-1 = ['move-node-to-workspace AI',      'workspace AI']
+alt-shift-2 = ['move-node-to-workspace Code',    'workspace Code']
+alt-shift-3 = ['move-node-to-workspace CLI',     'workspace CLI']
+alt-shift-4 = ['move-node-to-workspace Browser', 'workspace Browser']
+alt-shift-5 = ['move-node-to-workspace Media',   'workspace Media']
+alt-shift-6 = ['move-node-to-workspace Social',  'workspace Social']
+alt-shift-7 = ['move-node-to-workspace 7',       'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8',       'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9',       'workspace 9']
 
 # Quick repair if a window was accidentally floating.
 alt-ctrl-r = 'layout tiling'

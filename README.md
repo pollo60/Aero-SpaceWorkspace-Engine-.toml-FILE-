@@ -6,24 +6,29 @@ This repository contains the production-ready [AeroSpace](https://github.com/nik
 
 Designed with Strategic Software Engineering / Architecture in mind, this configuration bridges the gap between strict Tiling Window Management (TWM) and macOS's native floating behavior, resulting in a zero-latency, context-switching powerhouse.
 
+> **MacGOD Ready** — This config ships pre-wired for MacGOD (yabai + Phoenix integration). A single toggle inside the file switches it into full Ghost Mode where yabai removes title bars and Phoenix owns window logic. See the *MacGOD Deployment* section below.
+
 ## **🧠 Architectural Core Principles**
 
-1. **Hybrid Rendering (Floating First):** Unlike traditional TWMs, this setup defaults to layout floating for newly detected windows. This preserves manual resizing across sessions while allowing you to snap into full tiling (Opt \+ F) when raw coding throughput is required.  
-2. **Zero Gaps, Maximum Data:** All inner and outer gaps are set to 0\. In data-heavy financial engineering, every pixel matters.  
-3. **Strict App-to-Workspace Routing:** Applications are automatically sorted into dedicated, persistent workspaces upon launch to eliminate cognitive overload.  
-4. **Hardware Synergy:** Deeply integrated with [Mac Mouse Fix](https://macmousefix.com/) for fluid multi-monitor interactions.
+1. **Named Workspaces:** Workspaces carry semantic identities (`AI`, `Code`, `CLI`, `Browser`, `Media`, `Social`) instead of opaque numbers, so `alt+1` always means *AI context* regardless of how many spaces macOS has shuffled around.
+2. **Zero Gaps, Maximum Data:** All inner and outer gaps are set to 0\. In data-heavy financial engineering, every pixel matters.
+3. **Strict App-to-Workspace Routing:** Applications are automatically sorted into dedicated, persistent workspaces upon launch to eliminate cognitive overload.
+4. **Window Follows You:** `Opt + Shift + Number` moves the focused window *and* teleports you to the destination workspace — because you use this combo a lot.
+5. **Hardware Synergy:** Deeply integrated with [Mac Mouse Fix](https://macmousefix.com/) for fluid multi-monitor interactions.
 
 ## **🏗 Workspace Taxonomy**
 
 The workspace routing is hardcoded via regex and Bundle IDs to maintain absolute order. Additionally, the user can easily edit the favorite apps for each workspace:
 
-| Workspace | Domain | Auto-Routed Applications |
-| :---- | :---- | :---- |
-| **Workspace 1** | 🤖 **AI / Agentic Logic** | Gemini, ChatGPT, Claude (PWAs) |
-| **Workspace 2** | 💻 **IDE / Engineering** | Visual Studio Code |
-| **Workspace 3** | 📟 **CLI / Server** | Terminal, iTerm2 |
-| **Workspace 4** | 🌍 **Research / Web** | Safari, Chrome, Firefox |
-| **Workspace 9** | 💬 **Communication** | Slack, Apple Mail |
+| Key | Workspace | Domain | Auto-Routed Applications |
+| :---- | :---- | :---- | :---- |
+| **alt+1** | **AI** | 🤖 AI / Agentic Logic | Gemini, ChatGPT, Claude, Copilot (PWAs or native) |
+| **alt+2** | **Code** | 💻 IDE / Engineering | Visual Studio Code |
+| **alt+3** | **CLI** | 📟 CLI / Server | iTerm2, Terminal |
+| **alt+4** | **Browser** | 🌍 Research / Web | Safari, Chrome, Firefox, Arc |
+| **alt+5** | **Media** | 🎵 Music / Media | Spotify, Apple Music |
+| **alt+6** | **Social** | 💬 Communication | Slack, Apple Mail, Messages, Discord |
+| **alt+7–9** | **7 / 8 / 9** | 🗒 Scratch / Free | Unassigned — use for ad-hoc contexts |
 
 ## **⌨️ The Ergonomic Matrix**
 
@@ -35,7 +40,7 @@ This configuration uses a carefully mapped modifier logic. The primary modifier 
 | :---- | :---- | :---- |
 | Opt \+ Arrows | **Resize Window** (+/- 80px) | Rapid floating adjustments. |
 | Opt \+ Ctrl \+ Arrows | **Change Focus** | Directional focus switching. |
-| Opt \+ Shift \+ Arrows | **Move Window** | Push window in a direction. |
+| Opt \+ Shift \+ Arrows | **Move Window** | Push window in a direction (tiling grid). |
 | Opt \+ F | **Toggle Tiling/Floating** | Switch between strict grid and free-form. |
 | ⚠️ **Architect's Note** | **Strictly Arrow Keys** | I exclusively use Opt \+ Arrow Keys. No Vim-bindings (H/J/K/L) are used to minimize cognitive load. |
 
@@ -43,8 +48,45 @@ This configuration uses a carefully mapped modifier logic. The primary modifier 
 
 | Shortcut | Action |
 | :---- | :---- |
-| Opt \+ 1-9 | Switch to Workspace 1-9 |
-| Opt \+ Shift \+ 1-9 | Map focused window to Workspace 1-9 |
+| Opt \+ 1–9 | Switch to named workspace (AI, Code, CLI …) |
+| Opt \+ Shift \+ 1–9 | Move focused window **and follow it** to the named workspace |
+
+## **🚀 MacGOD Deployment (Ghost Mode)**
+
+This config is pre-wired for [MacGOD](https://github.com/pollo60/Aero-SpaceWorkspace-Engine-.toml-FILE-) — a full God-Mode layer that adds:
+
+* **yabai** (SIP off) to eliminate window title bars
+* **Phoenix** (JavaScript) for per-window logic, naming, and scripted positioning
+
+### Activating Ghost Mode (MacGOD users only)
+
+Open `~/.aerospace.toml` and swap the normalization + layout block to:
+
+```toml
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = false
+default-root-container-layout = 'float'   # yabai + Phoenix own the layout
+```
+
+Then install and start yabai with your `~/.yabairc`:
+
+```bash
+brew install koekeishiya/formulae/yabai
+brew services start yabai
+```
+
+Minimal `~/.yabairc` for title-bar removal:
+
+```bash
+sudo yabai --load-sa
+yabai -m config layout float
+yabai -m config window_titlebar off
+yabai -m config window_shadow off
+```
+
+> **⚠️ Note:** After every macOS update, run `sudo yabai --install-sa` if title bars reappear.
+
+Without MacGOD, leave the tiling defaults in place — AeroSpace handles everything independently.
 
 ## **🖥️ Multi-Monitor Workflow: "The Teleport"**
 
@@ -126,7 +168,7 @@ Click the target window, and the script will output the exact ID to paste into y
 \[\[on-window-detected\]\]  
 \# Change the App ID here:  
 if.app-id \= 'com.jetbrains.intellij'   
-run \= \['move-node-to-workspace 2', 'layout floating'\]
+run \= \['move-node-to-workspace Code', 'layout tiling'\]
 
 **Customizing the Teleport Move Key (Opt \+ Shift \+ N)**
 
