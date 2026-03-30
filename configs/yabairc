@@ -1,0 +1,43 @@
+#!/usr/bin/env zsh
+# ~/.yabairc — Minimal yabai configuration for MacGOD Ghost Mode
+#
+# Purpose:
+#   Strip every visible chrome (title bars, shadows) from all windows
+#   so AeroSpace + Phoenix own 100 % of screen geometry.
+#
+# Prerequisites:
+#   1. System Integrity Protection (SIP) MUST be disabled.
+#   2. Configure passwordless sudo for the scripting addition so that
+#      yabai can load it on login without prompting.  Run once:
+#        sudo visudo -f /private/etc/sudoers.d/yabai
+#      and add the line (replace USERNAME and YABAI_PATH as appropriate):
+#        USERNAME ALL=(root) NOPASSWD: /usr/local/bin/yabai --load-sa
+#      Confirm the correct path with: which yabai
+#   3. After every macOS update run:
+#        sudo yabai --install-sa
+#      to reinstall the scripting addition that enables chrome removal.
+#
+# Install:
+#   cp configs/yabairc ~/.yabairc
+#   brew services start yabai
+
+# ── Load scripting addition (required for title-bar removal) ──────────────
+# Requires passwordless sudo for this command (see Prerequisites above).
+sudo yabai --load-sa
+
+# ── Global layout ─────────────────────────────────────────────────────────
+# AeroSpace manages workspace assignment; yabai only controls chrome.
+# Setting layout to float prevents yabai from re-tiling windows on top
+# of whatever AeroSpace has arranged.
+yabai -m config layout float
+
+# ── Window chrome ─────────────────────────────────────────────────────────
+yabai -m config window_titlebar off
+yabai -m config window_shadow   off
+
+# ── Mouse interaction ─────────────────────────────────────────────────────
+# Disable mouse-follows-focus; Mac Mouse Fix handles pointer routing.
+yabai -m config mouse_follows_focus off
+yabai -m config focus_follows_mouse off
+
+echo "yabai MacGOD Ghost Mode loaded."
