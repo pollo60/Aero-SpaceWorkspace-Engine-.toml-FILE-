@@ -56,36 +56,72 @@ This configuration uses a carefully mapped modifier logic. The primary modifier 
 
 This config is pre-wired for [MacGOD](https://github.com/pollo60/Aero-SpaceWorkspace-Engine-.toml-FILE-) — a full God-Mode layer that adds:
 
-* **yabai** (SIP off) to eliminate window title bars
-* **Phoenix** (JavaScript) for per-window logic, naming, and scripted positioning
+* **yabai** (SIP partially disabled) to eliminate window title bars and shadows
+* **Phoenix** (JavaScript) for per-window snapping, thirds, and corner positioning
 
-### Activating Ghost Mode (MacGOD users only)
+The repository includes complete, ready-to-deploy configuration files for both tools under `configs/`.
 
-Open `~/.aerospace.toml` and swap the normalization + layout block to:
+### One-Command Toggle
 
-```toml
-enable-normalization-flatten-containers = false
-enable-normalization-opposite-orientation-for-nested-containers = false
-default-root-container-layout = 'float'   # yabai + Phoenix own the layout
+Use the included toggle script to switch between Ghost Mode and standard tiling without manually editing any files:
+
+```bash
+# Activate MacGOD Ghost Mode (deploys yabai + Phoenix configs, patches TOML)
+./scripts/toggle_macgod.sh --on
+
+# Return to standard AeroSpace tiling mode (stops yabai + Phoenix)
+./scripts/toggle_macgod.sh --off
+
+# Auto-detect current state and flip
+./scripts/toggle_macgod.sh
+
+# Show current mode without changing anything
+./scripts/toggle_macgod.sh --status
 ```
 
-Then install and start yabai with your `~/.yabairc`:
+### What the Toggle Does
+
+| Step | Action |
+| :--- | :----- |
+| Patches `~/.aerospace.toml` | Flips `default-root-container-layout` between `'tiles'` and `'float'` |
+| Deploys `configs/yabairc` | Copies `configs/yabairc` → `~/.yabairc` (backs up existing) |
+| Deploys `configs/phoenix.js` | Copies `configs/phoenix.js` → `~/.phoenix.js` (backs up existing) |
+| Restarts yabai | Runs `brew services restart yabai` |
+| Reloads AeroSpace | Runs `aerospace reload-config` |
+
+### Phoenix Keyboard Bindings (MacGOD mode)
+
+Phoenix adds fine-grained window positioning on top of AeroSpace's workspace switching. All Phoenix bindings use `⌘⌃` (Cmd + Ctrl) to avoid collisions with AeroSpace's `⌥` (Option) layer.
+
+| Shortcut | Action |
+| :--- | :----- |
+| `⌘⌃ + Return` | Maximise window to fill screen |
+| `⌘⌃ + ←/→` | Snap to left/right half |
+| `⌘⌃ + ↑/↓` | Snap to top/bottom half |
+| `⌘⌃⌥ + ←` | Snap to left third |
+| `⌘⌃⌥ + →` | Snap to right third |
+| `⌘⌃⌥ + ↑` | Snap to centre third (wide column) |
+| `⌘⌃⌥ + ↓` | Snap to two-thirds (left) |
+| `⌘⌃ + 7/8/1/2` | Snap to top-left / top-right / bottom-left / bottom-right quarter |
+| `⌘⌃ + C` | Centre window on screen (keeps current size) |
+| `⌘⌃ + M` | Throw window to next monitor (mirrors AeroSpace ⌥⇧N) |
+| `⌘⌃ + R` | Reload Phoenix config |
+
+### Prerequisites (MacGOD only)
+
+1. **Partially disable SIP** (required for title-bar removal):
+   In macOS Recovery run `csrutil enable --without debug --without fs`
+
+2. **Install yabai and Phoenix:**
 
 ```bash
 brew install koekeishiya/formulae/yabai
+brew install --cask phoenix
+sudo yabai --install-sa
 brew services start yabai
 ```
 
-Minimal `~/.yabairc` for title-bar removal:
-
-```bash
-sudo yabai --load-sa
-yabai -m config layout float
-yabai -m config window_titlebar off
-yabai -m config window_shadow off
-```
-
-> **⚠️ Note:** After every macOS update, run `sudo yabai --install-sa` if title bars reappear.
+> **⚠️ Note:** After every macOS update, run `sudo yabai --install-sa && brew services restart yabai` if title bars reappear.
 
 Without MacGOD, leave the tiling defaults in place — AeroSpace handles everything independently.
 
@@ -320,6 +356,24 @@ If you rely on Opt \+ Shift \+ N for another application, you can remap the mult
 
 \# Example: Remap multi-monitor move to Opt \+ S  
 alt-s \= 'move-node-to-monitor \--wrap-around next'
+
+## **🩺 Health Check**
+
+Run the dependency health check at any time to verify the full stack is correctly deployed:
+
+```bash
+./scripts/check_deps.sh
+```
+
+This will verify:
+* AeroSpace is installed and `~/.aerospace.toml` is deployed
+* `dock-layout-sync.sh` is present and executable
+* Current mode (standard tiling vs MacGOD Ghost Mode)
+* yabai and Phoenix status when MacGOD is active
+* All DX scripts are present and executable
+* macOS version advisory for scripting addition updates
+
+Exit code `0` = everything healthy. Exit code `1` = one or more items need attention.
 
 ## **🔭 Further Suggestions: The Raycast Extension**
 
