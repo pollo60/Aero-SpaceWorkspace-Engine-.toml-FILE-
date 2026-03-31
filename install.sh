@@ -136,6 +136,9 @@ if [[ ":${PATH}:" != *":${BIN_DIR}:"* ]]; then
   echo ""
   echo -e "    ${BOLD}export PATH=\"\$HOME/bin:\$PATH\"${RESET}"
   echo ""
+  info "Then reload your shell:"
+  echo -e "    ${BOLD}source ~/.zshrc${RESET}   (or ${BOLD}source ~/.bashrc${RESET} if using bash)"
+  echo ""
 fi
 
 # ── 5. Reload AeroSpace config ───────────────────────────────────────────────

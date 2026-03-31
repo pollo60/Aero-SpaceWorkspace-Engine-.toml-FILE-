@@ -65,7 +65,13 @@ activate_macgod() {
         -e "s/^enable-normalization-opposite-orientation-for-nested-containers = true$/enable-normalization-opposite-orientation-for-nested-containers = false/" \
         -e "s/^default-root-container-layout = 'tiles'$/default-root-container-layout = 'float'/" \
         "$TOML"
-    ok "Patched $TOML for MacGOD mode."
+    
+    # Validate that patches succeeded
+    if grep -q "default-root-container-layout = 'float'" "$TOML"; then
+        ok "Patched $TOML for MacGOD mode."
+    else
+        die "Failed to patch TOML; check file format and try again."
+    fi
 
     # 2. Deploy yabai config if not already present
     if [[ -f "$REPO_YABAIRC" ]]; then

@@ -93,6 +93,8 @@ Use the included toggle script to switch between Ghost Mode and standard tiling 
 
 Phoenix adds fine-grained window positioning on top of AeroSpace's workspace switching. All Phoenix bindings use `⌘⌃` (Cmd + Ctrl) to avoid collisions with AeroSpace's `⌥` (Option) layer.
 
+**Note:** These bindings are from the primary `configs/phoenix.js` (using ⌘⌃). A legacy config `configs/phoenixrc.js` using ⌥⌃ bindings is also included as a reference for alternative modifier schemes.
+
 | Shortcut | Action |
 | :--- | :----- |
 | `⌘⌃ + Return` | Maximise window to fill screen |
@@ -179,7 +181,8 @@ The `configs/` directory contains the companion files required to run full MacGO
 | File | Purpose |
 | :---- | :---- |
 | `configs/yabairc` | Minimal yabai config — removes title bars and shadows, keeps layout floating so AeroSpace/Phoenix own positioning. |
-| `configs/phoenixrc.js` | Starter Phoenix JavaScript config — grid-snap keybindings, a centre-window shortcut, and a VS Code auto-maximise hook. |
+| `configs/phoenix.js` | **Primary** Phoenix JavaScript config (⌘⌃ modifier) — grid-snap to halves/thirds/corners, centre, throw to next monitor, and reload. |
+| `configs/phoenixrc.js` | Legacy Phoenix JavaScript config (⌥⌃ modifier) — reference implementation for alternative modifier scheme. |
 
 ### Deploy MacGOD dependencies
 

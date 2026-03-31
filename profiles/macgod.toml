@@ -21,8 +21,8 @@ default-root-container-layout = 'float'   # yabai + Phoenix own the layout
 default-root-container-orientation = 'horizontal'
 
 # Named, persistent workspaces — all semantic identities.
-# Scratch / Misc / Temp are intentionally unrouted free spaces.
-persistent-workspaces = ['AI', 'Code', 'CLI', 'Browser', 'Media', 'Social', 'Scratch', 'Misc', 'Temp']
+# All 9 workspaces: AI, Code, CLI, Browser, Media, Social, 7, 8, 9
+persistent-workspaces = ['AI', 'Code', 'CLI', 'Browser', 'Media', 'Social', '7', '8', '9']
 
 [gaps]
 inner.horizontal = 0
@@ -106,6 +106,28 @@ run = 'move-node-to-workspace Social'
 if.app-id = 'com.hnc.Discord'
 run = 'move-node-to-workspace Social'
 
+# ── Workspace 7 ── Notion, Obsidian, Figma
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
+if.app-id = 'com.figma.Desktop'
+run = 'move-node-to-workspace 7'
+
+# ── System dialogs → floating
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
 [mode.main.binding]
 # ==========================================================
 # MULTI-MONITOR ROUTING
@@ -142,9 +164,9 @@ alt-3 = 'workspace CLI'
 alt-4 = 'workspace Browser'
 alt-5 = 'workspace Media'
 alt-6 = 'workspace Social'
-alt-7 = 'workspace Scratch'
-alt-8 = 'workspace Misc'
-alt-9 = 'workspace Temp'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
 
 alt-shift-1 = ['move-node-to-workspace AI',      'workspace AI']
 alt-shift-2 = ['move-node-to-workspace Code',    'workspace Code']
@@ -152,9 +174,9 @@ alt-shift-3 = ['move-node-to-workspace CLI',     'workspace CLI']
 alt-shift-4 = ['move-node-to-workspace Browser', 'workspace Browser']
 alt-shift-5 = ['move-node-to-workspace Media',   'workspace Media']
 alt-shift-6 = ['move-node-to-workspace Social',  'workspace Social']
-alt-shift-7 = ['move-node-to-workspace Scratch', 'workspace Scratch']
-alt-shift-8 = ['move-node-to-workspace Misc',    'workspace Misc']
-alt-shift-9 = ['move-node-to-workspace Temp',    'workspace Temp']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
 
 alt-ctrl-r = 'layout tiling'
 alt-ctrl-d = ['flatten-workspace-tree', 'balance-sizes']
