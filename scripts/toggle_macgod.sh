@@ -2,7 +2,7 @@
 # =============================================================================
 # scripts/toggle_macgod.sh — Toggle MacGOD Ghost Mode on/off
 # =============================================================================
-# Edits ~/.aerospace.toml in-place to switch between:
+# Edits the AeroSpace config in-place to switch between:
 #   • Standard mode  (AeroSpace tiling, no yabai/Phoenix)
 #   • MacGOD mode    (AeroSpace float + yabai title-bar removal + Phoenix)
 #
@@ -11,10 +11,19 @@
 #   ./scripts/toggle_macgod.sh --on     # force MacGOD mode on
 #   ./scripts/toggle_macgod.sh --off    # force MacGOD mode off
 #   ./scripts/toggle_macgod.sh --status # print current state and exit
+#   ./scripts/toggle_macgod.sh --help   # display usage instructions
 # =============================================================================
 set -euo pipefail
 
-TOML="${AEROSPACE_TOML:-$HOME/.aerospace.toml}"
+# Auto-detect target TOML location if not explicitly provided
+if [[ -n "${AEROSPACE_TOML:-}" ]]; then
+    TOML="$AEROSPACE_TOML"
+elif [[ -f "$HOME/.config/aerospace/aerospace.toml" ]]; then
+    TOML="$HOME/.config/aerospace/aerospace.toml"
+else
+    TOML="$HOME/.aerospace.toml"
+fi
+
 YABAIRC="${YABAIRC:-$HOME/.yabairc}"
 PHOENIXJS="${PHOENIXJS:-$HOME/.phoenix.js}"
 
@@ -33,7 +42,7 @@ warn()  { echo "⚠️   $*"; }
 
 require_toml() {
     if [[ ! -f "$TOML" ]]; then
-        echo "❌  Could not find ~/.aerospace.toml at: $TOML" >&2
+        echo "❌  Could not find AeroSpace TOML at: $TOML" >&2
         echo "    Deploy it first with: ./install.sh" >&2
         exit 1
     fi
@@ -204,6 +213,10 @@ print_status() {
 # Entry point
 # ---------------------------------------------------------------------------
 case "${1:-}" in
+    -h|--help)
+        echo "Usage: $(basename "$0") [--on | --off | --status | --help]"
+        exit 0
+        ;;
     --on)     activate_macgod   ;;
     --off)    deactivate_macgod ;;
     --status) print_status      ;;
@@ -217,7 +230,7 @@ case "${1:-}" in
         fi
         ;;
     *)
-        echo "Usage: $(basename "$0") [--on | --off | --status]"
+        echo "Usage: $(basename "$0") [--on | --off | --status | --help]"
         exit 1
         ;;
 esac
