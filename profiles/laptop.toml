@@ -1,8 +1,12 @@
 config-version = 2
 start-at-login = true
+auto-reload-config = true
 
-# Keep tiling in sync when Dock autohide state changes.
-after-startup-command = ['exec-and-forget /bin/zsh ~/.config/aerospace/dock-layout-sync.sh']
+# Keep tiling in sync when Dock autohide state changes (if dock-layout-sync.sh is installed).
+# This configuration is 100% standalone and works out-of-the-box with zero external dependencies.
+after-startup-command = [
+  'exec-and-forget /bin/zsh -c "[[ -f ~/.config/aerospace/dock-layout-sync.sh ]] && exec ~/.config/aerospace/dock-layout-sync.sh"'
+]
 
 # ==========================================================
 # LAPTOP PROFILE — single display, compact tiling
@@ -55,6 +59,14 @@ run = ['move-node-to-workspace AI', 'layout tiling']
 if.app-id = 'com.microsoft.VSCode'
 run = ['move-node-to-workspace Code', 'layout tiling']
 
+[[on-window-detected]]
+if.app-id = 'com.todesktop.230313mzl4w4u92'
+run = ['move-node-to-workspace Code', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'dev.zed.Zed'
+run = ['move-node-to-workspace Code', 'layout tiling']
+
 # ── CLI workspace ──
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
@@ -62,6 +74,14 @@ run = ['move-node-to-workspace CLI', 'layout tiling']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Terminal'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'dev.warp.Warp'
+run = ['move-node-to-workspace CLI', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
 run = ['move-node-to-workspace CLI', 'layout tiling']
 
 # ── Browser workspace ──
@@ -79,6 +99,10 @@ run = ['move-node-to-workspace Browser', 'layout tiling']
 
 [[on-window-detected]]
 if.app-id = 'company.thebrowser.Browser'
+run = ['move-node-to-workspace Browser', 'layout tiling']
+
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
 run = ['move-node-to-workspace Browser', 'layout tiling']
 
 # ── Media workspace ──
@@ -110,6 +134,18 @@ run = ['move-node-to-workspace Social', 'layout tiling']
 # ── System dialogs → floating ──
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.archiveutility'
 run = 'layout floating'
 
 [mode.main.binding]

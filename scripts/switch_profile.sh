@@ -12,6 +12,7 @@
 # pick one interactively.
 #
 # Examples:
+#   ./scripts/switch_profile.sh default
 #   ./scripts/switch_profile.sh macgod
 #   ./scripts/switch_profile.sh laptop
 #   ./scripts/switch_profile.sh ~/my-custom.toml
@@ -23,8 +24,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 PROFILES_DIR="$REPO_ROOT/profiles"
-TARGET="$HOME/.aerospace.toml"
 BACKUP_DIR="$HOME/.aerospace_profiles_backup"
+
+# Auto-detect target config path
+if [[ -f "$HOME/.config/aerospace/aerospace.toml" ]]; then
+  TARGET="$HOME/.config/aerospace/aerospace.toml"
+else
+  TARGET="$HOME/.aerospace.toml"
+fi
 
 # ── Helpers ───────────────────────────────────────────────────────────────
 usage() {
@@ -32,7 +39,7 @@ usage() {
   echo ""
   echo "Available built-in profiles:"
   for f in "$PROFILES_DIR"/*.toml; do
-    echo "  $(basename "${f%.toml}")"
+    [[ -f "$f" ]] && echo "  $(basename "${f%.toml}")"
   done
   exit 0
 }
@@ -42,8 +49,8 @@ backup_current() {
     mkdir -p "$BACKUP_DIR"
     local ts
     ts="$(date +%Y%m%d_%H%M%S)"
-    cp "$TARGET" "$BACKUP_DIR/.aerospace.$ts.toml"
-    echo "  ↳ Backed up current config to $BACKUP_DIR/.aerospace.$ts.toml"
+    cp "$TARGET" "$BACKUP_DIR/aerospace.$ts.toml"
+    echo "  ↳ Backed up current config to $BACKUP_DIR/aerospace.$ts.toml"
   fi
 }
 
@@ -54,6 +61,7 @@ activate() {
     exit 1
   fi
   backup_current
+  mkdir -p "$(dirname "$TARGET")"
   cp "$src" "$TARGET"
   echo "✓ Profile applied: $src → $TARGET"
 
@@ -61,7 +69,7 @@ activate() {
   if command -v aerospace &>/dev/null; then
     aerospace reload-config && echo "✓ AeroSpace reloaded." || true
   else
-    echo "  ↳ AeroSpace not found in PATH — reload manually with: aerospace reload-config"
+    echo "  ↳ AeroSpace not found in PATH — start AeroSpace to load the new profile."
   fi
 }
 
@@ -75,7 +83,7 @@ interactive_menu() {
 
   local -a profiles=()
   for f in "$PROFILES_DIR"/*.toml; do
-    profiles+=("$(basename "${f%.toml}")")
+    [[ -f "$f" ]] && profiles+=("$(basename "${f%.toml}")")
   done
 
   if [[ ${#profiles[@]} -eq 0 ]]; then
@@ -108,6 +116,15 @@ case "${1:-}" in
     ;;
   "")
     interactive_menu
+    ;;
+  default)
+    if [[ -f "$PROFILES_DIR/default.toml" ]]; then
+      activate "$PROFILES_DIR/default.toml"
+    elif [[ -f "$REPO_ROOT/aerospace.toml" ]]; then
+      activate "$REPO_ROOT/aerospace.toml"
+    else
+      activate "$REPO_ROOT/.aerospace.toml"
+    fi
     ;;
   *)
     # Accept either a bare name or a full path.

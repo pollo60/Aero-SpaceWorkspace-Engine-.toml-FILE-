@@ -2,10 +2,11 @@
 # =============================================================================
 # AeroSpace Workspace Engine — One-Command Installer
 # =============================================================================
-# Usage: ./install.sh [--no-brew] [--no-reload]
+# Usage: ./install.sh [--no-brew] [--no-reload] [--xdg]
 #
 #   --no-brew    Skip AeroSpace Homebrew installation check.
 #   --no-reload  Skip `aerospace reload-config` at the end.
+#   --xdg        Deploy config to ~/.config/aerospace/aerospace.toml
 # =============================================================================
 
 set -euo pipefail
@@ -22,16 +23,19 @@ error()   { echo -e "${RED}[ERROR]${RESET} $*" >&2; }
 # ── Parse flags ──────────────────────────────────────────────────────────────
 SKIP_BREW=false
 SKIP_RELOAD=false
+USE_XDG=false
+
 for arg in "$@"; do
   case "$arg" in
     --no-brew)   SKIP_BREW=true ;;
     --no-reload) SKIP_RELOAD=true ;;
+    --xdg)       USE_XDG=true ;;
     -h|--help)
-      echo "Usage: $0 [--no-brew] [--no-reload]"
+      echo "Usage: $0 [--no-brew] [--no-reload] [--xdg]"
       exit 0 ;;
     *)
       error "Unknown argument: $arg"
-      echo "Usage: $0 [--no-brew] [--no-reload]"
+      echo "Usage: $0 [--no-brew] [--no-reload] [--xdg]"
       exit 1 ;;
   esac
 done
@@ -73,13 +77,21 @@ else
   fi
 fi
 
-# ── 3. Deploy .aerospace.toml ─────────────────────────────────────────────────
-TOML_SRC="${REPO_ROOT}/.aerospace.toml"
-TOML_DST="${HOME}/.aerospace.toml"
+# ── 3. Deploy aerospace.toml ──────────────────────────────────────────────────
+TOML_SRC="${REPO_ROOT}/aerospace.toml"
+[[ ! -f "$TOML_SRC" ]] && TOML_SRC="${REPO_ROOT}/.aerospace.toml"
 
 if [[ ! -f "$TOML_SRC" ]]; then
-  error ".aerospace.toml not found in repo root: ${TOML_SRC}"
+  error "AeroSpace TOML not found in repo root: ${TOML_SRC}"
   exit 1
+fi
+
+if $USE_XDG; then
+  AEROSPACE_CFG="${HOME}/.config/aerospace"
+  mkdir -p "$AEROSPACE_CFG"
+  TOML_DST="${AEROSPACE_CFG}/aerospace.toml"
+else
+  TOML_DST="${HOME}/.aerospace.toml"
 fi
 
 if [[ -f "$TOML_DST" ]]; then
@@ -89,7 +101,7 @@ if [[ -f "$TOML_DST" ]]; then
 fi
 
 cp "$TOML_SRC" "$TOML_DST"
-success "Deployed .aerospace.toml → ${TOML_DST}"
+success "Deployed config → ${TOML_DST}"
 
 # ── 4. Deploy scripts ─────────────────────────────────────────────────────────
 SCRIPTS_SRC="${REPO_ROOT}/scripts"
@@ -106,7 +118,7 @@ if [[ -f "$SYNC_SRC" ]]; then
   chmod +x "$SYNC_DST"
   success "Deployed dock-layout-sync.sh → ${SYNC_DST}"
 else
-  warn "dock-layout-sync.sh not found in scripts/ — skipping."
+  info "dock-layout-sync.sh not found in scripts/ — skipping."
 fi
 
 # get_appid.sh — install to ~/bin for convenience
@@ -134,7 +146,7 @@ if [[ ":${PATH}:" != *":${BIN_DIR}:"* ]]; then
   warn "~/bin is not in your PATH."
   warn "Add the following to your shell profile (~/.zshrc or ~/.bashrc):"
   echo ""
-  echo -e "    ${BOLD}export PATH=\"\$HOME/bin:\$PATH\"${RESET}"
+  echo -e "    ${BOLD}export PATH="\$HOME/bin:\$PATH"${RESET}"
   echo ""
   info "Then reload your shell:"
   echo -e "    ${BOLD}source ~/.zshrc${RESET}   (or ${BOLD}source ~/.bashrc${RESET} if using bash)"
@@ -149,7 +161,7 @@ elif command -v aerospace &>/dev/null; then
   aerospace reload-config && success "AeroSpace config reloaded." \
     || warn "Could not reload config automatically. Run: aerospace reload-config"
 else
-  warn "AeroSpace not in PATH — reload it manually: aerospace reload-config"
+  info "AeroSpace CLI not found in PATH — start AeroSpace to apply the config."
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────

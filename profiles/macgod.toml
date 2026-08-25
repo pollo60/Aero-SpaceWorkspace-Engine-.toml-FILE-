@@ -1,8 +1,12 @@
 config-version = 2
 start-at-login = true
+auto-reload-config = true
 
-# Keep tiling in sync when Dock autohide state changes.
-after-startup-command = ['exec-and-forget /bin/zsh ~/.config/aerospace/dock-layout-sync.sh']
+# Keep tiling in sync when Dock autohide state changes (if dock-layout-sync.sh is installed).
+# This configuration is 100% standalone and works out-of-the-box with zero external dependencies.
+after-startup-command = [
+  'exec-and-forget /bin/zsh -c "[[ -f ~/.config/aerospace/dock-layout-sync.sh ]] && exec ~/.config/aerospace/dock-layout-sync.sh"'
+]
 
 # ==========================================================
 # MacGOD GHOST MODE — yabai + Phoenix own layout & chrome
@@ -49,12 +53,28 @@ check-further-callbacks = true
 if.app-name-regex-substring = '(?i)(gemini|chatgpt|claude|copilot)'
 run = 'move-node-to-workspace AI'
 
-# ── Code workspace ── Visual Studio Code
+# ── Code workspace ── Visual Studio Code, Cursor, Xcode, Zed, JetBrains
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
 run = 'move-node-to-workspace Code'
 
-# ── CLI workspace ── iTerm2 and built-in Terminal
+[[on-window-detected]]
+if.app-id = 'com.todesktop.230313mzl4w4u92'
+run = 'move-node-to-workspace Code'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.dt.Xcode'
+run = 'move-node-to-workspace Code'
+
+[[on-window-detected]]
+if.app-id = 'dev.zed.Zed'
+run = 'move-node-to-workspace Code'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '(?i)(intellij|webstorm|pycharm|goland|clion|datagrip|rubymine|rider)'
+run = 'move-node-to-workspace Code'
+
+# ── CLI workspace ── iTerm2, Terminal, Warp, Ghostty, Kitty, Hyper
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
 run = 'move-node-to-workspace CLI'
@@ -63,7 +83,19 @@ run = 'move-node-to-workspace CLI'
 if.app-id = 'com.apple.Terminal'
 run = 'move-node-to-workspace CLI'
 
-# ── Browser workspace ── Safari, Chrome, Firefox, Arc
+[[on-window-detected]]
+if.app-id = 'dev.warp.Warp'
+run = 'move-node-to-workspace CLI'
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = 'move-node-to-workspace CLI'
+
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run = 'move-node-to-workspace CLI'
+
+# ── Browser workspace ── Safari, Chrome, Firefox, Arc, Brave, Edge, Vivaldi, Zen
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = 'move-node-to-workspace Browser'
@@ -80,7 +112,23 @@ run = 'move-node-to-workspace Browser'
 if.app-id = 'company.thebrowser.Browser'
 run = 'move-node-to-workspace Browser'
 
-# ── Media workspace ── Spotify, Apple Music
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.edgemac'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'com.vivaldi.Vivaldi'
+run = 'move-node-to-workspace Browser'
+
+[[on-window-detected]]
+if.app-id = 'app.zen-browser.zen'
+run = 'move-node-to-workspace Browser'
+
+# ── Media workspace ── Spotify, Apple Music, Plex, VLC, IINA
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = 'move-node-to-workspace Media'
@@ -89,7 +137,19 @@ run = 'move-node-to-workspace Media'
 if.app-id = 'com.apple.Music'
 run = 'move-node-to-workspace Media'
 
-# ── Social workspace ── Slack, Apple Mail, Messages, Discord
+[[on-window-detected]]
+if.app-id = 'com.plexapp.plex'
+run = 'move-node-to-workspace Media'
+
+[[on-window-detected]]
+if.app-id = 'org.videolan.vlc'
+run = 'move-node-to-workspace Media'
+
+[[on-window-detected]]
+if.app-id = 'com.colliderli.iina'
+run = 'move-node-to-workspace Media'
+
+# ── Social workspace ── Slack, Apple Mail, Messages, Discord, Teams, Telegram, WhatsApp, Linear
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace Social'
@@ -104,6 +164,22 @@ run = 'move-node-to-workspace Social'
 
 [[on-window-detected]]
 if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace Social'
+
+[[on-window-detected]]
+if.app-id = 'com.linear'
 run = 'move-node-to-workspace Social'
 
 # ── Workspace 7 ── Notion, Obsidian, Figma
@@ -126,6 +202,14 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.archiveutility'
 run = 'layout floating'
 
 [mode.main.binding]
@@ -174,9 +258,9 @@ alt-shift-3 = ['move-node-to-workspace CLI',     'workspace CLI']
 alt-shift-4 = ['move-node-to-workspace Browser', 'workspace Browser']
 alt-shift-5 = ['move-node-to-workspace Media',   'workspace Media']
 alt-shift-6 = ['move-node-to-workspace Social',  'workspace Social']
-alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
-alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
-alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+alt-shift-7 = ['move-node-to-workspace 7',       'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8',       'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9',       'workspace 9']
 
 alt-ctrl-r = 'layout tiling'
 alt-ctrl-d = ['flatten-workspace-tree', 'balance-sizes']

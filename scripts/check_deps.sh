@@ -38,15 +38,19 @@ else
     fail "aerospace not found.  Install: brew install --cask nikitabobko/tap/aerospace"
 fi
 
-# Config file
+# Config file location
 TOML="$HOME/.aerospace.toml"
-if [[ -f "$TOML" ]]; then
-    ok "~/.aerospace.toml present"
-else
-    fail "~/.aerospace.toml missing.  Deploy with: ./install.sh  or  cp .aerospace.toml ~/.aerospace.toml"
+if [[ ! -f "$TOML" && -f "$HOME/.config/aerospace/aerospace.toml" ]]; then
+    TOML="$HOME/.config/aerospace/aerospace.toml"
 fi
 
-# Dock-sync script
+if [[ -f "$TOML" ]]; then
+    ok "Config file present ($TOML)"
+else
+    fail "AeroSpace TOML missing.  Deploy with: ./install.sh  or  cp aerospace.toml ~/.aerospace.toml"
+fi
+
+# Dock-sync script (optional daemon)
 DOCK_SYNC="$HOME/.config/aerospace/dock-layout-sync.sh"
 if [[ -f "$DOCK_SYNC" ]]; then
     if [[ -x "$DOCK_SYNC" ]]; then
@@ -55,7 +59,7 @@ if [[ -f "$DOCK_SYNC" ]]; then
         warn "dock-layout-sync.sh present but NOT executable.  Fix: chmod +x \"$DOCK_SYNC\""
     fi
 else
-    fail "dock-layout-sync.sh missing at $DOCK_SYNC.  Deploy with: ./install.sh"
+    ok "Running in standalone TOML mode (dock-layout-sync.sh optional)"
 fi
 
 # ---------------------------------------------------------------------------
@@ -130,7 +134,7 @@ fi
 # ---------------------------------------------------------------------------
 h1 "DX Scripts"
 
-for script in scripts/get_appid.sh scripts/list_apps.sh scripts/toggle_macgod.sh scripts/check_deps.sh; do
+for script in scripts/get_appid.sh scripts/list_apps.sh scripts/toggle_macgod.sh scripts/check_deps.sh scripts/switch_profile.sh scripts/workspace_status.sh; do
     path="$(cd "$(dirname "$0")/.." && pwd)/$script"
     if [[ -f "$path" ]]; then
         if [[ -x "$path" ]]; then
